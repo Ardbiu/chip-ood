@@ -19,14 +19,10 @@ DATASETS_CONFIG = {
         "domain_key": "domain",
         "label_key": "label",
         "image_key": "image"
-    },
-    "TerraIncognita": {
-        "hf_path": "BGLab/TerraIncognita",
-        "domain_key": "domain", # Check if this exists
-        "label_key": "label",
-        "image_key": "image"
     }
 }
+# TerraIncognita on HF (BGLab) is not the correct DomainBed benchmark version.
+# VLCS is not available.
 
 def save_item(args):
     img, filepath = args
@@ -37,7 +33,6 @@ def process_dataset(name, cfg, root_dir):
     print(f"\nProcessing {name}...")
     try:
         # Load dataset
-        # Trust remote code needed for some?
         ds = load_dataset(cfg["hf_path"], split="train", trust_remote_code=True)
     except Exception as e:
         print(f"Error loading {name}: {e}")
@@ -52,11 +47,8 @@ def process_dataset(name, cfg, root_dir):
             return features[key].int2str(idx)
         return str(idx)
 
-    tasks = []
-    
-    print(f"Converting {len(ds)} images...")
-    
     output_root = os.path.join(root_dir, name)
+    print(f"Converting {len(ds)} images to {output_root}...")
     
     for idx, item in tqdm(enumerate(ds), total=len(ds)):
         try:
@@ -66,6 +58,9 @@ def process_dataset(name, cfg, root_dir):
             
             domain_name = get_name(cfg["domain_key"], domain_idx)
             class_name = get_name(cfg["label_key"], label_idx)
+            
+            # SANITIZE: OfficeHome uses "Real World" in HF, but "RealWorld" in DomainBed
+            domain_name = domain_name.replace(" ", "")
             
             # Destination: root/Dataset/Domain/Class/Image.jpg
             dest_dir = os.path.join(output_root, domain_name, class_name)
@@ -92,8 +87,3 @@ if __name__ == "__main__":
     
     # 2. OfficeHome
     process_dataset("OfficeHome", DATASETS_CONFIG["OfficeHome"], ROOT)
-    
-    # 3. TerraIncognita
-    # Note: BGLab/TerraIncognita might have different split names or column names
-    # Inspecting schema at runtime or assuming standard
-    process_dataset("TerraIncognita", DATASETS_CONFIG["TerraIncognita"], ROOT)
