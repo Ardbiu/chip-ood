@@ -4,7 +4,7 @@
 #SBATCH -t 12:00:00
 #SBATCH -p mit_normal
 #SBATCH --mem=16G
-#SBATCH --gres=gpu:h200:1
+#SBATCH --gres=gpu:1
 #SBATCH -o logs/final_%j.out
 #SBATCH -e logs/final_%j.err
 
