@@ -5,7 +5,7 @@
 #SBATCH -p mit_normal_gpu
 #SBATCH --mem=12G
 #SBATCH --gres=gpu:1
-#SBATCH --array=1-100%20 
+#SBATCH --array=1-6%20 
 #SBATCH -o logs/tuning_%A_%a.out
 #SBATCH -e logs/tuning_%A_%a.err
 

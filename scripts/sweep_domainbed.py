@@ -48,6 +48,8 @@ def main():
             f.write(c + "\n")
             
     print("Commands saved to scripts/generated_tuning_cmds.txt")
+    print(f"\nTo launch these {len(cmds)} jobs, run:")
+    print(f"sbatch --array=1-{len(cmds)}%20 scripts/slurm/run_domainbed_tuning.slurm")
 
 if __name__ == "__main__":
     main()
