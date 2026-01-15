@@ -9,11 +9,11 @@ import sys
 # z_dim_s ∈ {128, 256}
 # seeds_tune = 3
 
-LAMBDAS = [0.03, 0.1, 0.3]
-Z_C_LIST = [64, 128]
-Z_S_LIST = [128, 256]
+LAMBDAS = [0.1] # Reduced from [0.03, 0.1, 0.3]
+Z_C_LIST = [64]   # Reduced from [64, 128]
+Z_S_LIST = [256]  # Reduced from [128, 256]
 SEEDS = [0, 1, 2]
-DATASETS = ["domainbed_pacs", "domainbed_terraincognita"] # Start with these
+DATASETS = ["domainbed_pacs", "domainbed_officehome"] # Prioritize these 2
 
 def main():
     root_out = "results/domainbed_tuning"
