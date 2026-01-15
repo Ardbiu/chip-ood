@@ -9,16 +9,18 @@ from torchvision.datasets.utils import download_url
 # Source: facebookresearch/DomainBed
 DATASETS = {
     "PACS": {
-        "url": "https://drive.google.com/uc?id=0B6eKvaijfFvjbU02M1B1bXk5VVk",
+        # Mirror from TALLY/DomainGeneralizedBenchmark
+        "url": "https://drive.google.com/uc?id=1JFr8f805nMUelQWWmfnJR3y4_SYoN5Pd",
         "filename": "PACS.zip",
         "type": "zip",
         "gdrive": True
     },
     "VLCS": {
-        "url": "http://www.cs.dartmouth.edu/~chenfang/Datasets/VLCS.tar.gz",
+        # Mirror from TALLY
+        "url": "https://drive.google.com/uc?id=1skwblH1_okBwxWxmRsp9_qi15hyPpxg8",
         "filename": "VLCS.tar.gz",
         "type": "tar",
-        "gdrive": False
+        "gdrive": True
     },
     "OfficeHome": {
         "url": "https://drive.google.com/uc?id=0B81rNlvOA7hJMmxVd19tVldhaW8",
