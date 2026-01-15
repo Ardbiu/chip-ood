@@ -18,6 +18,7 @@ module load gcc/12.2.0-x86_64
 module load python/3.10.8-x86_64
 
 source .venv/bin/activate
+export PYTHONPATH=$PYTHONPATH:$(pwd)/src
 
 # Get command from line number
 CMD=$(sed -n "${SLURM_ARRAY_TASK_ID}p" scripts/generated_tuning_cmds.txt)

@@ -14,6 +14,7 @@ module load gcc/12.2.0-x86_64
 module load python/3.10.8-x86_64
 
 source .venv/bin/activate
+export PYTHONPATH=$PYTHONPATH:$(pwd)/src
 
 # Example: Run 10 seeds for best CHIP config
 # User should edit this or pass args
