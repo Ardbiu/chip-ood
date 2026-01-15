@@ -2,7 +2,7 @@
 #SBATCH -n 1
 #SBATCH -N 1
 #SBATCH -t 12:00:00
-#SBATCH -p mit_normal
+#SBATCH -p engaging
 #SBATCH --mem=16G
 #SBATCH --gres=gpu:1
 #SBATCH -o logs/final_%j.out

@@ -2,7 +2,7 @@
 #SBATCH -n 1
 #SBATCH -N 1
 #SBATCH -t 4:00:00
-#SBATCH -p mit_normal
+#SBATCH -p engaging
 #SBATCH --mem=12G
 #SBATCH --gres=gpu:1
 #SBATCH --array=1-100%20 
