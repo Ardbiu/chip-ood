@@ -12,7 +12,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from omegacpython -m chip_ood.evaluation.aggregate --input_dir results --output_dir results/aggregate_dir):
+from omegaconf import OmegaConf
+
+def aggregate_results(input_dir, output_dir):
     records = []
     all_learning_curves = []
     

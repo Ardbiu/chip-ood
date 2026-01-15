@@ -69,25 +69,41 @@ def main(cfg: DictConfig):
         raise ValueError(f"Unknown dataset type {cfg.data.dataset_type}")
 
     # 2. Model components
-    if cfg.method.name == "chip":
+    if "chip" in cfg.method.name:
         encoder = enc_cls(z_dim_c=cfg.method.z_dim_c, z_dim_s=cfg.method.z_dim_s).to(device)
         predictor = Predictor(input_dim=cfg.method.z_dim_c, num_classes=cfg.data.num_classes, hidden_dim=cfg.method.hidden_dim).to(device)
         decoder = dec_cls(z_dim=cfg.method.z_dim_c + cfg.method.z_dim_s).to(device)
-        adversary = AdversaryClf(input_dim=cfg.method.z_dim_s, num_classes=cfg.data.num_classes).to(device) # Adversary targets Y usually
+        adversary = AdversaryClf(input_dim=cfg.method.z_dim_s, num_classes=cfg.data.num_classes).to(device)
         
         model = CHIP(encoder, predictor, decoder, adversary, 
                      lambda_rec=cfg.method.lambda_rec, 
                      lambda_adv=cfg.method.lambda_adv,
-                     adv_type=cfg.method.adv_type,
-                     num_classes=cfg.data.num_classes).to(device)
+                     adv_type=cfg.method.adv_type).to(device)
                      
     elif cfg.method.name == "erm":
-        # For ERM, we can use same encoder but ignore Zs, or just one big Z.
-        # Let's use same encoder to simulate same capacity, but we might just use z_c part or sum?
-        # Simpler: z_dim_c in config acts as total feature dim.
         encoder = enc_cls(z_dim_c=cfg.method.z_dim_c, z_dim_s=0).to(device)
-        predictor = Predictor(input_dim=cfg.method.z_dim_c, num_classes=cfg.data.num_classes).to(device)
-        model = ERM(encoder, predictor, num_classes=cfg.data.num_classes).to(device)
+        predictor = Predictor(input_dim=cfg.method.z_dim_c, num_classes=cfg.data.num_classes, hidden_dim=cfg.method.hidden_dim).to(device)
+        model = ERM(encoder, predictor).to(device)
+        
+    elif cfg.method.name == "coral":
+        encoder = enc_cls(z_dim_c=cfg.method.z_dim_c, z_dim_s=0).to(device)
+        predictor = Predictor(input_dim=cfg.method.z_dim_c, num_classes=cfg.data.num_classes, hidden_dim=cfg.method.hidden_dim).to(device)
+        model = CORAL(encoder, predictor).to(device)
+        
+    elif cfg.method.name == "irm":
+        encoder = enc_cls(z_dim_c=cfg.method.z_dim_c, z_dim_s=0).to(device)
+        predictor = Predictor(input_dim=cfg.method.z_dim_c, num_classes=cfg.data.num_classes, hidden_dim=cfg.method.hidden_dim).to(device)
+        model = IRM(encoder, predictor).to(device)
+        
+    elif cfg.method.name == "groupdro":
+        encoder = enc_cls(z_dim_c=cfg.method.z_dim_c, z_dim_s=0).to(device)
+        predictor = Predictor(input_dim=cfg.method.z_dim_c, num_classes=cfg.data.num_classes, hidden_dim=cfg.method.hidden_dim).to(device)
+        # Infer num_groups from data? Usually len(dataset.domains). 
+        # For simplicity, pass strict num_groups via config or infer from data wrapper if exposed.
+        # Let's assume 4 for PACS/VLCS for now or allow config to set it.
+        num_groups = 4 # Default for PACS
+        if "num_groups" in cfg.data: num_groups = cfg.data.num_groups
+        model = GroupDRO(encoder, predictor, num_groups=num_groups).to(device)
         
     elif cfg.method.name == "eiil":
         encoder = enc_cls(z_dim_c=cfg.method.z_dim_c, z_dim_s=0).to(device)
@@ -115,7 +131,7 @@ def main(cfg: DictConfig):
         steps = 0
         
         # Adjust lambdas based on schedule
-        if cfg.method.name == "chip":
+        if "chip" in cfg.method.name:
             if epoch <= warmup_epochs:
                 # ERM Phase
                 model.lambda_rec = 0.0
@@ -127,17 +143,22 @@ def main(cfg: DictConfig):
                 model.lambda_adv = cfg.method.lambda_adv
         
         pbar = tqdm(train_loader, desc=f"Epoch {epoch}")
-        for x, y in pbar:
-            x, y = x.to(device), y.to(device)
+        for batch in train_loader:
+            x, y, d = batch # Upgrade: expect triplets
+            x, y, d = x.to(device), y.to(device), d.to(device)
             
             optimizer.zero_grad()
-            loss, batch_metrics = model.update(x, y, step=epoch) # simplified step
+            
+            # Method Update
+            if hasattr(model, "update_with_extras"):
+                loss, metrics = model.update_with_extras(x, y, {"d": d})
+            else:
+                # Legacy / Generic fallback
+                loss, metrics = model.update(x, y, step=epoch)
+            
             loss.backward()
             optimizer.step()
             
-            train_loss += batch_metrics.get("loss", 0.0)
-            train_acc += batch_metrics.get("acc", 0.0)
-            adv_acc_sum += batch_metrics.get("adv_acc", 0.0)
             rec_loss_sum += batch_metrics.get("loss_rec", 0.0)
             steps += 1
             

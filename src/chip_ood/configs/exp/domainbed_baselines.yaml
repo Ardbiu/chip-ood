@@ -1,0 +1,10 @@
+# @package _global_
+# Run all baselines
+# Usage: python trainer.py --config-name=domainbed_baselines +method=groupdro ...
+
+defaults:
+  - override /data: domainbed_pacs
+  - override /method: erm
+
+# This file just serves as a template or target for multirun
+# E.g. python trainer.py -m method=erm,coral,irm,groupdro data=domainbed_pacs,domainbed_vlcs seed=0,1,2

@@ -1,0 +1,42 @@
+{
+    "protocol": "DomainBed (Standard)",
+    "validation_strategy": "train_val_split_iid",
+    "validation_fraction": 0.2,
+    "validation_mode": "leave_one_out_test",
+    "tuning": {
+        "num_seeds": 3,
+        "grid": {
+            "lambda_adv": [
+                0.03,
+                0.1,
+                0.3
+            ],
+            "z_dim_c": [
+                64,
+                128
+            ],
+            "z_dim_s": [
+                128,
+                256
+            ]
+        }
+    },
+    "final_evaluation": {
+        "num_seeds": 10,
+        "metric": "test_acc",
+        "aggregation": "mean_std"
+    },
+    "baselines": [
+        "ERM",
+        "CORAL",
+        "GroupDRO",
+        "IRM",
+        "EIIL"
+    ],
+    "datasets": [
+        "PACS",
+        "VLCS",
+        "TerraIncognita",
+        "OfficeHome"
+    ]
+}
