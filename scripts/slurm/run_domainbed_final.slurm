@@ -2,11 +2,16 @@
 #SBATCH -n 1
 #SBATCH -N 1
 #SBATCH -t 12:00:00
-#SBATCH -p engaging
+#SBATCH -p mit_normal
 #SBATCH --mem=16G
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:h200:1
 #SBATCH -o logs/final_%j.out
 #SBATCH -e logs/final_%j.err
+
+# Load Modules (Specific to Engaging Cluster)
+module load deprecated-modules
+module load gcc/12.2.0-x86_64
+module load python/3.10.8-x86_64
 
 source .venv/bin/activate
 
