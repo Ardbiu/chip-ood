@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chip_ood"
+version = "0.1.0"
+description = "Causal Information Partitioning for OOD Generalization"
+authors = [{name = "Antigravity", email = "antigravity@deepmind.google"}]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+    "numpy>=1.24.0",
+    "hydra-core>=1.3.0",
+    "omegaconf>=2.3.0",
+    "pandas>=2.0.0",
+    "scikit-learn>=1.2.0",
+    "tqdm>=4.65.0",
+    "matplotlib>=3.7.0",
+    "seaborn>=0.12.0",
+    "gdown>=4.7.0",
+    "pillow>=9.5.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "isort",
+    "flake8"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

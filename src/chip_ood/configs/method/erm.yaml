@@ -1,0 +1,4 @@
+name: erm
+z_dim_c: 64  # Total dim if we use same encoder structure
+z_dim_s: 0   # Unused
+hidden_dim: 256

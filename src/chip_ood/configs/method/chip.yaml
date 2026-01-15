@@ -1,0 +1,8 @@
+# chip.yaml
+name: chip
+lambda_rec: 1.0
+lambda_adv: 1.0
+adv_type: clf
+z_dim_c: 32
+z_dim_s: 32
+hidden_dim: 256

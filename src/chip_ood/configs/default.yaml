@@ -1,0 +1,15 @@
+defaults:
+  - method: chip
+  - data: colored_mnist
+  - trainer: base
+  - logging: base
+  - _self_
+
+seed: 0
+output_dir: results
+
+hydra:
+  run:
+    dir: ${output_dir}/${data.name}_${method.name}_${seed}
+  job:
+    chdir: True

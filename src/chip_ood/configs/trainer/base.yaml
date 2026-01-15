@@ -1,0 +1,5 @@
+max_epochs: 20
+lr: 0.001
+weight_decay: 1e-4
+check_val_every_n_epoch: 1
+device: "mps" # or cuda or cpu. MPS since user is on Mac M4.
